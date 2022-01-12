@@ -1,0 +1,109 @@
+package com.java.miniproject;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class DBManager 
+{
+	private Connection connect;
+
+	public DBManager()
+	{
+
+	}
+
+	public Connection getconnect()
+	{
+		return connect;
+
+	}
+	public void openconnection()
+	{
+		try 
+		{
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			String jdbc_url="jdbc:mysql://localhost:3306/mini_project_db";
+			String uname="root";
+			String password="anurag";
+			connect=DriverManager.getConnection(jdbc_url,uname,password);
+			System.out.println("database connection succeess");
+		}
+			catch (SQLException e) 
+			{
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+
+			catch (ClassNotFoundException e) 
+			{
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+
+		
+	}
+		public void closeconnection()
+		{
+			try 
+			{
+				connect.close();
+			} catch (SQLException e) 
+			{
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+
+		}
+		
+		public boolean validateUser(String uname, String pass)
+		{
+			//connect db;
+			openconnection();
+			try {
+			//query fire;
+			
+			String query="select * from user_info_tbl where user_username='"+uname+"'and user_password='"+pass+"' ";
+			Statement stmt=connect.createStatement();
+			ResultSet rs=stmt.executeQuery(query);
+			//validate user;
+			if(rs.next())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+			}
+			catch(Exception e)
+			{
+				System.err.println(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			finally 
+			{
+			//close connection;
+				closeconnection();
+			}
+			//return value;
+			return false;
+		}
+		
+		public static void main(String args[])
+		{
+			DBManager obj=new DBManager();
+			boolean result=obj.validateUser("anil", "anil@123");
+			System.out.println(result);
+		}
+
+	}
+
+
+
+>mysql --port=3306 --host=127.0.0.1 --user=root --password=anurag mini_project_db
+
+mysql --port=3306 --host=127.0.0.1 --user=root --password=anurag db2
